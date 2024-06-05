@@ -70,6 +70,18 @@ const findByEmail = async (email) => {
 };
 
 /**
+ * Updates a staff member by its ID and returns the updated data.
+ *
+ * @param {string} id - The ID of the staff member to update.
+ * @param {object} data - The data to update the staff member with.
+ * @returns {Promise<object|null>} A promise that resolves to the updated staff object or null if not found.
+ */
+const updateById = async (id, data) => {
+  const response = await staff.update(data, { where: { id }, returning: true });
+  return response[1][0].get({ plain: true });
+};
+
+/**
  * Deletes a staff by its ID.
  *
  * @param {string} id - The ID of the staff to delete.
@@ -83,6 +95,7 @@ staffService.create = create;
 staffService.findAndCountAll = findAndCountAll;
 staffService.findById = findById;
 staffService.findByEmail = findByEmail;
+staffService.updateById = updateById;
 staffService.deleteById = deleteById;
 
 export default staffService;
