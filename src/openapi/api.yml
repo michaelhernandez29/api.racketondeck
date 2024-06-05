@@ -1,0 +1,2878 @@
+openapi: '3.0.2'
+info:
+  title: API Title
+  version: '1.0'
+servers:
+  - url: http://localhost:3610/v1
+tags:
+  - name: Accounts 📝
+    description: Operations related to managing user accounts.
+  - name: User Authentication 🔐
+    description: Operations related to managing user authentication and security.
+  - name: Staff 👨‍🏫
+    description: Operations related to managing staff members within the academy.
+  - name: Players 🧑‍🤝‍🧑
+    description: Operations related to managing players and their activities.
+  - name: User Roles & Permissions 🔑
+    description: Operations related to managing staff roles and permissions.
+  - name: Applications 📱
+    description: Operations related to managing padel academies.
+  - name: Customizations ⚙️
+    description: Operations related to customizing features and settings.
+  - name: Courts 🎾
+    description: Operations related to managing courts within academies.
+  - name: Court Conditions 🏞️
+    description: Operations related to updating and managing court conditions.
+  - name: Bookings 📅
+    description: Operations related to booking padel courts and managing reservations.
+  - name: Tournaments 🏆
+    description: Operations related to organizing and managing tournaments.
+  - name: Notifications 🔔
+    description: Operations related to sending and managing notifications.
+  - name: Memberships 🏷️
+    description: Operations related to managing membership plans and subscriptions.
+  - name: Reports 📊
+    description: Operations related to generating and viewing reports.
+  - name: Events 🎉
+    description: Operations related to managing events and special activities.
+  - name: Feedback 🗣️
+    description: Operations related to collecting and managing user feedback.
+  - name: Support 🛠️
+    description: Operations related to providing customer support and handling inquiries.
+  - name: Inventory 📦
+    description: Operations related to managing inventory and equipment.
+  - name: Schedules 📅
+    description: Operations related to managing schedules for courts, instructors, and events.
+  - name: Training Programs 🏋️‍♂️
+    description: Operations related to creating and managing training programs.
+  - name: News 📰
+    description: Operations related to publishing and managing news articles.
+  - name: Sponsorships 🤝
+    description: Operations related to managing sponsorship deals and partnerships.
+  - name: Merchandise 🛍️
+    description: Operations related to managing and selling merchandise.
+  - name: Leaderboards 🥇
+    description: Operations related to managing and displaying player leaderboards.
+  - name: Community Forums 💬
+    description: Operations related to managing community forums and discussions.
+  - name: Lost & Found 🕵️‍♂️
+    description: Operations related to managing lost and found items.
+  - name: Surveys 📋
+    description: Operations related to creating and managing surveys.
+  - name: Equipment Rentals 👕
+    description: Operations related to managing rental of equipment.
+  - name: Volunteer Management 🙋‍♂️
+    description: Operations related to managing volunteers for events and programs.
+  - name: Data Analytics 📊
+    description: Operations related to analyzing data for insights and improvements.
+  - name: External Integrations 🔗
+    description: Operations related to integrating with external systems and services.
+
+paths:
+  /accounts:
+    post:
+      tags:
+        - Accounts 📝
+      summary: Create a new account
+      description: |
+        This endpoint is used to create a new owner account on the platform. 
+        It requires providing the owner's name, email address, and password.
+      x-eov-operation-handler: accountController
+      operationId: create
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: The name of the user.
+                  example: John Doe
+                email:
+                  type: string
+                  description: The email address of the user.
+                  example: john@example.com
+                password:
+                  type: string
+                  description: The password for the user's account.
+                  example: mySecurePassword123
+              required:
+                - name
+                - email
+                - password
+              additionalProperties: false
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    description: HTTP status code indicating success.
+                    default: 201
+                  message:
+                    type: string
+                    description: Descriptive message of the success.
+                    default: Created
+                  data:
+                    $ref: '#/components/schemas/AccountCreated'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        409:
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conflict'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+  /accounts/{accountId}:
+    get:
+      tags:
+        - Accounts 📝
+      security:
+        - bearerAuth: []
+      summary: Retrieve a specific account by ID
+      description: |
+        Retrieve a specific account by its unique ID.
+        This endpoint allows you to fetch details of a specific account using its unique identifier (UUIDv4).
+      x-eov-operation-handler: accountController
+      operationId: findById
+      parameters:
+        - in: path
+          name: accountId
+          schema:
+            type: string
+            description: The unique identifier for the account (UUIDv4).
+            example: '123e4567-e89b-12d3-a456-426614174000'
+          required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    description: HTTP status code indicating success.
+                    default: 200
+                  message:
+                    type: string
+                    description: Descriptive message of the success.
+                    default: OK
+                  data:
+                    $ref: '#/components/schemas/Account'
+                required:
+                  - statusCode
+                  - message
+                  - data
+                additionalProperties: false
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        409:
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conflict'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+    delete:
+      tags:
+        - Accounts 📝
+      security:
+        - bearerAuth: []
+      summary: Delete a specific account by ID
+      description: |
+        Delete a specific account by its unique ID.
+        This endpoint allows you to remove details of a specific account using its unique identifier (UUIDv4).
+      x-eov-operation-handler: accountController
+      operationId: deleteById
+      parameters:
+        - in: path
+          name: accountId
+          schema:
+            type: string
+            description: The unique identifier for the account (UUIDv4).
+            example: '123e4567-e89b-12d3-a456-426614174000'
+          required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    description: HTTP status code indicating success.
+                    default: 200
+                  message:
+                    type: string
+                    description: Descriptive message of the success.
+                    default: OK
+                required:
+                  - statusCode
+                  - message
+                additionalProperties: false
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        409:
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conflict'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+  /auth/login:
+    post:
+      tags:
+        - User Authentication 🔐
+      summary: Authenticate a user
+      description: >
+        This endpoint allows a user to log in by providing their name and email address. Upon successful authentication, a token will be returned.
+      x-eov-operation-handler: authController
+      operationId: login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: The email address of the user.
+                  example: john@example.com
+                password:
+                  type: string
+                  description: The password for the user's account.
+                  example: mySecurePassword123
+              required:
+                - email
+                - password
+              additionalProperties: false
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    description: HTTP status code indicating success.
+                    default: 200
+                  message:
+                    type: string
+                    description: Descriptive message of the success.
+                    default: OK
+                  data:
+                    type: string
+                    description: Authentication token to be used for accessing protected resources.
+                required:
+                  - statusCode
+                  - message
+                  - data
+                additionalProperties: false
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        409:
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conflict'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+  /accounts/{accountId}/applications:
+    post:
+      tags:
+        - Applications 📱
+      security:
+        - bearerAuth: []
+      summary: Create a new application
+      description: |
+        Adds a new application entry to the system.
+        Use this endpoint to create a new application along with its details.
+      x-eov-operation-handler: applicationController
+      operationId: create
+      parameters:
+        - in: path
+          name: accountId
+          schema:
+            type: string
+            description: The unique identifier for the account (UUIDv4).
+            example: '123e4567-e89b-12d3-a456-426614174000'
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: The name of the application.
+                  example: My App
+                description:
+                  type: string
+                  description: A brief description of the application.
+                  example: This is a fantastic application
+                image:
+                  type: string
+                  description: URL or path to an image representing the application.
+                  nullable: true
+                enabled:
+                  type: boolean
+                  description: A flag indicating whether the application is enabled.
+                  example: true
+                  default: true
+              required:
+                - name
+                - enabled
+              additionalProperties: false
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    description: HTTP status code indicating success.
+                    default: 201
+                  message:
+                    type: string
+                    description: Descriptive message of the success.
+                    default: Created
+                  data:
+                    $ref: '#/components/schemas/Application'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        409:
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conflict'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+    get:
+      tags:
+        - Applications 📱
+      security:
+        - bearerAuth: []
+      summary: Retrieve a list of applications
+      description: This endpoint allows retrieving a list of users from a specific account.
+      x-eov-operation-handler: applicationController
+      operationId: findAndCountAll
+      parameters:
+        - in: path
+          name: accountId
+          schema:
+            type: string
+            description: The unique identifier for the account (UUIDv4).
+            example: '123e4567-e89b-12d3-a456-426614174000'
+          required: true
+        - name: page
+          in: query
+          description: The page number for pagination.
+          required: false
+          schema:
+            type: integer
+            format: int64
+            default: 0
+        - name: limit
+          in: query
+          description: The limit of results per page.
+          required: false
+          schema:
+            type: integer
+            format: int64
+            default: 20
+        - name: find
+          in: query
+          description: A search term to filter results.
+          required: false
+          schema:
+            type: string
+        - name: order
+          in: query
+          description: >
+            Order of the results: 
+              
+              - `a-z` - Order by name ascending. From A to Z
+              - `z-a` - Order by name descending. From Z to A
+          required: false
+          schema:
+            type: string
+            enum:
+              - a-z
+              - z-a
+            default: a-z
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    description: HTTP status code indicating success.
+                    default: 200
+                  message:
+                    type: string
+                    description: Descriptive message of the success.
+                    default: OK
+                  count:
+                    type: integer
+                    description: Total count of the results.
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Application'
+                required:
+                  - statusCode
+                  - message
+                  - count
+                  - data
+                additionalProperties: false
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        409:
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conflict'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+  /accounts/{accountId}/applications/{applicationId}:
+    get:
+      tags:
+        - Applications 📱
+      security:
+        - bearerAuth: []
+      summary: Retrieve a specific application by ID
+      description: |
+        Retrieve a specific application by its unique ID.
+        This endpoint allows you to fetch details of a specific application using its unique identifier (UUIDv4).
+      x-eov-operation-handler: applicationController
+      operationId: findById
+      parameters:
+        - in: path
+          name: accountId
+          schema:
+            type: string
+            description: The unique identifier for the account (UUIDv4).
+            example: '123e4567-e89b-12d3-a456-426614174000'
+          required: true
+        - in: path
+          name: applicationId
+          schema:
+            type: string
+            description: The unique identifier for the application (UUIDv4).
+            example: '123e4567-e89b-12d3-a456-426614174000'
+          required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    description: HTTP status code indicating success.
+                    default: 200
+                  message:
+                    type: string
+                    description: Descriptive message of the success.
+                    default: OK
+                  data:
+                    $ref: '#/components/schemas/Application'
+                required:
+                  - statusCode
+                  - message
+                  - data
+                additionalProperties: false
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        409:
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conflict'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+    put:
+      tags:
+        - Applications 📱
+      security:
+        - bearerAuth: []
+      summary: Update a specific application by ID
+      description: |
+        Update a specific application by its unique ID.
+        This endpoint allows you to update details of a specific application using its unique identifier (UUIDv4).
+      x-eov-operation-handler: applicationController
+      operationId: updateById
+      parameters:
+        - in: path
+          name: accountId
+          schema:
+            type: string
+            description: The unique identifier for the account (UUIDv4).
+            example: '123e4567-e89b-12d3-a456-426614174000'
+          required: true
+        - in: path
+          name: applicationId
+          schema:
+            type: string
+            description: The unique identifier for the application (UUIDv4).
+            example: '123e4567-e89b-12d3-a456-426614174000'
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: The name of the application.
+                  example: My App
+                description:
+                  type: string
+                  description: A brief description of the application.
+                  example: This is a fantastic application
+                enabled:
+                  type: boolean
+                  description: A flag indicating whether the application is enabled.
+                  example: true
+                  default: true
+              additionalProperties: false
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    description: HTTP status code indicating success.
+                    default: 200
+                  message:
+                    type: string
+                    description: Descriptive message of the success.
+                    default: OK
+                  data:
+                    $ref: '#/components/schemas/Application'
+                required:
+                  - statusCode
+                  - message
+                  - data
+                additionalProperties: false
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        409:
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conflict'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+    delete:
+      tags:
+        - Applications 📱
+      security:
+        - bearerAuth: []
+      summary: Delete a specific application by ID
+      description: |
+        Delete a specific application by its unique ID.
+        This endpoint allows you to delete details of a specific application using its unique identifier (UUIDv4).
+      x-eov-operation-handler: applicationController
+      operationId: deleteById
+      parameters:
+        - in: path
+          name: accountId
+          schema:
+            type: string
+            description: The unique identifier for the account (UUIDv4).
+            example: '123e4567-e89b-12d3-a456-426614174000'
+          required: true
+        - in: path
+          name: applicationId
+          schema:
+            type: string
+            description: The unique identifier for the application (UUIDv4).
+            example: '123e4567-e89b-12d3-a456-426614174000'
+          required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    description: HTTP status code indicating success.
+                    default: 200
+                  message:
+                    type: string
+                    description: Descriptive message of the success.
+                    default: OK
+                required:
+                  - statusCode
+                  - message
+                additionalProperties: false
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        409:
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conflict'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+  /accounts/{accountId}/staff:
+    get:
+      tags:
+        - Staff 👨‍🏫
+      security:
+        - bearerAuth: []
+      summary: Retrieve a list of staff members
+      description: This endpoint allows retrieving a list of staff members from a specific account.
+      x-eov-operation-handler: staffController
+      operationId: findAndCountAll
+      parameters:
+        - in: path
+          name: accountId
+          schema:
+            type: string
+            description: The unique identifier for the account (UUIDv4).
+            example: '123e4567-e89b-12d3-a456-426614174000'
+          required: true
+        - in: query
+          name: applicationId
+          schema:
+            type: string
+            description: The unique identifier for the application (UUIDv4).
+            example: '123e4567-e89b-12d3-a456-426614174000'
+        - name: page
+          in: query
+          description: The page number for pagination.
+          required: false
+          schema:
+            type: integer
+            format: int64
+            default: 0
+        - name: limit
+          in: query
+          description: The limit of results per page.
+          required: false
+          schema:
+            type: integer
+            format: int64
+            default: 20
+        - name: find
+          in: query
+          description: A search term to filter results.
+          required: false
+          schema:
+            type: string
+        - name: order
+          in: query
+          description: >
+            Order of the results: 
+              
+              - `a-z` - Order by name ascending. From A to Z
+              - `z-a` - Order by name descending. From Z to A
+          required: false
+          schema:
+            type: string
+            enum:
+              - a-z
+              - z-a
+            default: a-z
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    description: HTTP status code indicating success.
+                    default: 200
+                  message:
+                    type: string
+                    description: Descriptive message of the success.
+                    default: OK
+                  count:
+                    type: integer
+                    description: Total count of the results.
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Staff'
+                required:
+                  - statusCode
+                  - message
+                  - count
+                  - data
+                additionalProperties: false
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        409:
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conflict'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+  /accounts/{accountId}/staff/{staffId}:
+    get:
+      tags:
+        - Staff 👨‍🏫
+      security:
+        - bearerAuth: []
+      summary: Retrieve a specific staff member by ID
+      description: |
+        Retrieve a specific staff member by their unique ID.
+        This endpoint allows you to fetch details of a specific staff member using their unique identifier (UUIDv4).
+      x-eov-operation-handler: staffController
+      operationId: findById
+      parameters:
+        - in: path
+          name: accountId
+          schema:
+            type: string
+            description: The unique identifier for the account (UUIDv4).
+            example: '123e4567-e89b-12d3-a456-426614174000'
+          required: true
+        - in: path
+          name: staffId
+          schema:
+            type: string
+            description: The unique identifier for the staff member (UUIDv4).
+            example: '123e4567-e89b-12d3-a456-426614174000'
+          required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    description: HTTP status code indicating success.
+                    default: 200
+                  message:
+                    type: string
+                    description: Descriptive message of the success.
+                    default: OK
+                  data:
+                    $ref: '#/components/schemas/Staff'
+                required:
+                  - statusCode
+                  - message
+                  - data
+                additionalProperties: false
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        409:
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conflict'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+    delete:
+      tags:
+        - Staff 👨‍🏫
+      security:
+        - bearerAuth: []
+      summary: Delete a specific staff member by ID
+      description: |
+        Delete a specific staff member by their unique ID.
+        This endpoint allows you to remove details of a specific staff member using their unique identifier (UUIDv4).
+      x-eov-operation-handler: staffController
+      operationId: deleteById
+      parameters:
+        - in: path
+          name: accountId
+          schema:
+            type: string
+            description: The unique identifier for the account (UUIDv4).
+            example: '123e4567-e89b-12d3-a456-426614174000'
+          required: true
+        - in: path
+          name: staffId
+          schema:
+            type: string
+            description: The unique identifier for the staff member (UUIDv4).
+            example: '123e4567-e89b-12d3-a456-426614174000'
+          required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    description: HTTP status code indicating success.
+                    default: 200
+                  message:
+                    type: string
+                    description: Descriptive message of the success.
+                    default: OK
+                required:
+                  - statusCode
+                  - message
+                additionalProperties: false
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        409:
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conflict'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+  /applications/{applicationId}/courts:
+    post:
+      tags:
+        - Courts 🎾
+      security:
+        - bearerAuth: []
+      summary: Create a new court
+      description: |
+        Adds a new court entry to a specific application.
+        Use this endpoint to create a new court along with its details.
+      x-eov-operation-handler: courtController
+      operationId: create
+      parameters:
+        - in: path
+          name: applicationId
+          schema:
+            type: string
+            description: The unique identifier for the application (UUIDv4).
+            example: '123e4567-e89b-12d3-a456-426614174000'
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: The name of the court.
+                  example: 1
+                sport:
+                  type: string
+                  description: The sport of the court.
+                  example: PADEL
+                  enum:
+                    - PADEL
+                    - TENNIS
+                surface:
+                  type: string
+                  description: The surface of the court.
+                  example: SYNTHETIC
+                  enum:
+                    - NATURAL_GRASS
+                    - ARTIFICIAL_GRASS
+                    - CLAY
+                    - HARD
+                    - SYNTHETIC
+                enabled:
+                  type: boolean
+                  description: A flag indicating whether the application is enabled.
+                  example: true
+                  default: true
+              required:
+                - name
+                - sport
+                - surface
+                - enabled
+              additionalProperties: false
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    description: HTTP status code indicating success.
+                    default: 201
+                  message:
+                    type: string
+                    description: Descriptive message of the success.
+                    default: Created
+                  data:
+                    $ref: '#/components/schemas/Court'
+                required:
+                  - statusCode
+                  - message
+                  - data
+                additionalProperties: false
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        409:
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conflict'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+    get:
+      tags:
+        - Courts 🎾
+      security:
+        - bearerAuth: []
+      summary: Retrieve a list of courts
+      description: This endpoint allows retrieving a list of courts from a specific application.
+      x-eov-operation-handler: courtController
+      operationId: findAndCountAll
+      parameters:
+        - in: path
+          name: applicationId
+          schema:
+            type: string
+            description: The unique identifier for the application (UUIDv4).
+            example: '123e4567-e89b-12d3-a456-426614174000'
+          required: true
+        - name: page
+          in: query
+          description: The page number for pagination.
+          required: false
+          schema:
+            type: integer
+            format: int64
+            default: 0
+        - name: limit
+          in: query
+          description: The limit of results per page.
+          required: false
+          schema:
+            type: integer
+            format: int64
+            default: 20
+        - name: find
+          in: query
+          description: A search term to filter results.
+          required: false
+          schema:
+            type: string
+        - name: order
+          in: query
+          description: >
+            Order of the results: 
+              
+              - `a-z` - Order by name ascending. From A to Z
+              - `z-a` - Order by name descending. From Z to A
+          required: false
+          schema:
+            type: string
+            enum:
+              - a-z
+              - z-a
+            default: a-z
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    description: HTTP status code indicating success.
+                    default: 200
+                  message:
+                    type: string
+                    description: Descriptive message of the success.
+                    default: OK
+                  count:
+                    type: integer
+                    description: Total count of the results.
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Court'
+                required:
+                  - statusCode
+                  - message
+                  - count
+                  - data
+                additionalProperties: false
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        409:
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conflict'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+  /applications/{applicationId}/courts/{courtId}:
+    get:
+      tags:
+        - Courts 🎾
+      security:
+        - bearerAuth: []
+      summary: Retrieve a specific court by ID
+      description: |
+        Retrieve a specific court by its unique ID.
+        This endpoint allows you to fetch details of a specific court using its unique identifier (UUIDv4).
+      x-eov-operation-handler: courtController
+      operationId: findById
+      parameters:
+        - in: path
+          name: applicationId
+          schema:
+            type: string
+            description: The unique identifier for the application (UUIDv4).
+            example: '123e4567-e89b-12d3-a456-426614174000'
+          required: true
+        - in: path
+          name: courtId
+          schema:
+            type: string
+            description: The unique identifier for the court (UUIDv4).
+            example: '123e4567-e89b-12d3-a456-426614174000'
+          required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    description: HTTP status code indicating success.
+                    default: 200
+                  message:
+                    type: string
+                    description: Descriptive message of the success.
+                    default: OK
+                  data:
+                    $ref: '#/components/schemas/Court'
+                required:
+                  - statusCode
+                  - message
+                  - data
+                additionalProperties: false
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        409:
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conflict'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+    put:
+      tags:
+        - Courts 🎾
+      security:
+        - bearerAuth: []
+      summary: Update a specific court by ID
+      description: |
+        Update a specific court by its unique ID. This endpoint allows you to update details of a specific court using its unique identifier (UUIDv4).
+      x-eov-operation-handler: courtController
+      operationId: updateById
+      parameters:
+        - in: path
+          name: applicationId
+          schema:
+            type: string
+            description: The unique identifier for the application (UUIDv4).
+            example: '123e4567-e89b-12d3-a456-426614174000'
+          required: true
+        - in: path
+          name: courtId
+          schema:
+            type: string
+            description: The unique identifier for the court (UUIDv4).
+            example: '123e4567-e89b-12d3-a456-426614174000'
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: The name of the court.
+                  example: 1
+                sport:
+                  type: string
+                  description: The sport of the court.
+                  example: PADEL
+                  enum:
+                    - PADEL
+                    - TENNIS
+                surface:
+                  type: string
+                  description: The surface of the court.
+                  example: SYNTHETIC
+                  enum:
+                    - NATURAL_GRASS
+                    - ARTIFICIAL_GRASS
+                    - CLAY
+                    - HARD
+                    - SYNTHETIC
+                enabled:
+                  type: boolean
+                  description: A flag indicating whether the application is enabled.
+                  example: true
+                  default: true
+              additionalProperties: false
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    description: HTTP status code indicating success.
+                    default: 200
+                  message:
+                    type: string
+                    description: Descriptive message of the success.
+                    default: OK
+                  data:
+                    $ref: '#/components/schemas/Court'
+                required:
+                  - statusCode
+                  - message
+                  - data
+                additionalProperties: false
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        409:
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conflict'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+    delete:
+      tags:
+        - Courts 🎾
+      security:
+        - bearerAuth: []
+      summary: Delete a specific court by ID
+      description: |
+        Delete a specific court by its unique ID.
+        This endpoint allows you to delete details of a specific court using its unique identifier (UUIDv4).
+      x-eov-operation-handler: courtController
+      operationId: deleteById
+      parameters:
+        - in: path
+          name: applicationId
+          schema:
+            type: string
+            description: The unique identifier for the application (UUIDv4).
+            example: '123e4567-e89b-12d3-a456-426614174000'
+          required: true
+        - in: path
+          name: courtId
+          schema:
+            type: string
+            description: The unique identifier for the court (UUIDv4).
+            example: '123e4567-e89b-12d3-a456-426614174000'
+          required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    description: HTTP status code indicating success.
+                    default: 200
+                  message:
+                    type: string
+                    description: Descriptive message of the success.
+                    default: OK
+                required:
+                  - statusCode
+                  - message
+                additionalProperties: false
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        409:
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conflict'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+  /applications/{applicationId}/tournaments:
+    post:
+      tags:
+        - Tournaments 🏆
+      summary: Create a new tournament
+      description: |
+        This endpoint is used to create a new tournament on the platform.
+        It requires providing details such as the tournament name, description, start date, end date, location, maximum participants, inscription fee, and other optional information.
+      x-eov-operation-handler: tournamentController
+      operationId: create
+      parameters:
+        - in: path
+          name: applicationId
+          schema:
+            type: string
+            description: The unique identifier for the application (UUIDv4).
+            example: '123e4567-e89b-12d3-a456-426614174000'
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: The name of the tournament.
+                  example: Summer Tennis Open
+                description:
+                  type: string
+                  description: A description of the tournament.
+                  example: Annual tennis tournament held during the summer.
+                registrationDeadline:
+                  type: string
+                  format: date-time
+                  description: The deadline for tournament registration.
+                  example: '2024-06-15T00:00:00Z'
+                startDate:
+                  type: string
+                  format: date-time
+                  description: The start date of the tournament.
+                  example: '2024-07-01T09:00:00Z'
+                endDate:
+                  type: string
+                  format: date-time
+                  description: The end date of the tournament.
+                  example: '2024-07-15T18:00:00Z'
+                location:
+                  type: string
+                  description: The location where the tournament will be held.
+                  example: Central Park Tennis Club
+                maxParticipants:
+                  type: integer
+                  description: The maximum number of participants allowed in the tournament.
+                  example: 64
+                inscriptionFee:
+                  type: number
+                  description: The fee required for tournament registration.
+                  example: 50.00
+                prize:
+                  type: string
+                  description: The prize offered for the tournament (money or material).
+                  example: $1000 cash prize
+                image:
+                  type: string
+                  description: URL or path to an image representing the tournament.
+                  nullable: true
+                enabled:
+                  type: boolean
+                  description: A flag indicating whether the tournament is enabled.
+                  example: true
+                  default: true
+              required:
+                - applicationId
+                - name
+                - registrationDeadline
+                - startDate
+                - endDate
+                - location
+                - maxParticipants
+                - inscriptionFee
+                - prize
+                - enabled
+              additionalProperties: false
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    description: HTTP status code indicating success.
+                    default: 201
+                  message:
+                    type: string
+                    description: Descriptive message of the success.
+                    default: Created
+                  data:
+                    $ref: '#/components/schemas/Tournament'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        409:
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conflict'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+    get:
+      tags:
+        - Tournaments 🏆
+      summary: Retrieve a list of tournaments
+      description: |
+        This endpoint allows retrieving a list of tournaments from a specific application.
+        You can filter the results by providing an application ID and additional query parameters for pagination, search, and ordering.
+      x-eov-operation-handler: tournamentController
+      operationId: findAndCountAll
+      parameters:
+        - in: path
+          name: applicationId
+          schema:
+            type: string
+            description: The unique identifier for the application (UUIDv4).
+            example: '123e4567-e89b-12d3-a456-426614174000'
+          required: true
+        - name: page
+          in: query
+          description: The page number for pagination.
+          required: false
+          schema:
+            type: integer
+            format: int64
+            default: 0
+        - name: limit
+          in: query
+          description: The limit of results per page.
+          required: false
+          schema:
+            type: integer
+            format: int64
+            default: 20
+        - name: find
+          in: query
+          description: A search term to filter results.
+          required: false
+          schema:
+            type: string
+        - name: order
+          in: query
+          description: >
+            Order of the results: 
+              
+              - `startDateAsc` - Order by start date ascending.
+              - `startDateDesc` - Order by start date descending.
+              - `endDateAsc` - Order by end date ascending.
+              - `endDateDesc` - Order by end date descending.
+              - `inscriptionFeeAsc` - Order by inscription fee ascending.
+              - `inscriptionFeeDesc` - Order by inscription fee descending.
+              - `maxParticipantsAsc` - Order by maximum participants ascending.
+              - `maxParticipantsDesc` - Order by maximum participants descending.
+              - `nameAsc` - Order by name ascending.
+              - `nameDesc` - Order by name descending.
+          required: false
+          schema:
+            type: string
+            enum:
+              - startDateAsc
+              - startDateDesc
+              - endDateAsc
+              - endDateDesc
+              - inscriptionFeeAsc
+              - inscriptionFeeDesc
+              - maxParticipantsAsc
+              - maxParticipantsDesc
+              - nameAsc
+              - nameDesc
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    description: HTTP status code indicating success.
+                    default: 200
+                  message:
+                    type: string
+                    description: Descriptive message of the success.
+                    default: OK
+                  count:
+                    type: integer
+                    description: Total count of the results.
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Tournament'
+                required:
+                  - statusCode
+                  - message
+                  - count
+                  - data
+                additionalProperties: false
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        409:
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conflict'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+  /applications/{applicationId}/tournaments/{tournamentId}:
+    get:
+      tags:
+        - Tournaments 🏆
+      summary: Retrieve a specific tournament by ID
+      description: |
+        Retrieve a specific tournament by its unique ID.
+        This endpoint allows you to fetch details of a specific tournament using its unique identifier (UUIDv4).
+      x-eov-operation-handler: tournamentController
+      operationId: findById
+      parameters:
+        - in: path
+          name: applicationId
+          schema:
+            type: string
+            description: The unique identifier for the application (UUIDv4).
+            example: '123e4567-e89b-12d3-a456-426614174000'
+          required: true
+        - in: path
+          name: tournamentId
+          schema:
+            type: string
+            description: The unique identifier for the tournament (UUIDv4).
+            example: '123e4567-e89b-12d3-a456-426614174000'
+          required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    description: HTTP status code indicating success.
+                    default: 200
+                  message:
+                    type: string
+                    description: Descriptive message of the success.
+                    default: OK
+                  data:
+                    $ref: '#/components/schemas/Tournament'
+                required:
+                  - statusCode
+                  - message
+                  - data
+                additionalProperties: false
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        409:
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conflict'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+    put:
+      tags:
+        - Tournaments 🏆
+      summary: Update a specific tournament by ID
+      description: |
+        Update a specific tournament by its unique ID. This endpoint allows you to update details of a specific tournament using its unique identifier (UUIDv4).
+      x-eov-operation-handler: tournamentController
+      operationId: updateById
+      parameters:
+        - in: path
+          name: applicationId
+          schema:
+            type: string
+            description: The unique identifier for the application (UUIDv4).
+            example: '123e4567-e89b-12d3-a456-426614174000'
+          required: true
+        - in: path
+          name: tournamentId
+          schema:
+            type: string
+            description: The unique identifier for the tournament (UUIDv4).
+            example: '123e4567-e89b-12d3-a456-426614174000'
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: The name of the tournament.
+                  example: Summer Tennis Open
+                description:
+                  type: string
+                  description: A description of the tournament.
+                  example: Annual tennis tournament held during the summer.
+                registrationDeadline:
+                  type: string
+                  format: date-time
+                  description: The deadline for tournament registration.
+                  example: '2024-06-15T00:00:00Z'
+                startDate:
+                  type: string
+                  format: date-time
+                  description: The start date of the tournament.
+                  example: '2024-07-01T09:00:00Z'
+                endDate:
+                  type: string
+                  format: date-time
+                  description: The end date of the tournament.
+                  example: '2024-07-15T18:00:00Z'
+                location:
+                  type: string
+                  description: The location where the tournament will be held.
+                  example: Central Park Tennis Club
+                maxParticipants:
+                  type: integer
+                  description: The maximum number of participants allowed in the tournament.
+                  example: 64
+                inscriptionFee:
+                  type: number
+                  description: The fee required for tournament registration.
+                  example: 50.00
+                prize:
+                  type: string
+                  description: The prize offered for the tournament (money or material).
+                  example: $1000 cash prize
+                enabled:
+                  type: boolean
+                  description: A flag indicating whether the tournament is enabled.
+                  example: true
+                  default: true
+              additionalProperties: false
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    description: HTTP status code indicating success.
+                    default: 200
+                  message:
+                    type: string
+                    description: Descriptive message of the success.
+                    default: OK
+                  data:
+                    $ref: '#/components/schemas/Tournament'
+                required:
+                  - statusCode
+                  - message
+                  - data
+                additionalProperties: false
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        409:
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conflict'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+    delete:
+      tags:
+        - Tournaments 🏆
+      summary: Delete a specific tournament by ID
+      description: |
+        Delete a specific tournament by its unique ID. This endpoint allows you to delete details of a specific tournament using its unique identifier (UUIDv4).
+      x-eov-operation-handler: tournamentController
+      operationId: deleteById
+      parameters:
+        - in: path
+          name: applicationId
+          schema:
+            type: string
+            description: The unique identifier for the application (UUIDv4).
+            example: '123e4567-e89b-12d3-a456-426614174000'
+          required: true
+        - in: path
+          name: tournamentId
+          schema:
+            type: string
+            description: The unique identifier for the tournament (UUIDv4).
+            example: '123e4567-e89b-12d3-a456-426614174000'
+          required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    description: HTTP status code indicating success.
+                    default: 200
+                  message:
+                    type: string
+                    description: Descriptive message of the success.
+                    default: OK
+                required:
+                  - statusCode
+                  - message
+                additionalProperties: false
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        409:
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conflict'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+  /feedback/issues:
+    post:
+      tags:
+        - Feedback 🗣️
+      summary: Create a new issue in a GitHub repository
+      description: This endpoint allows you to create a new issue in a specified GitHub repository.
+      x-eov-operation-handler: feedbackController
+      operationId: createIssue
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  description: The title of the GitHub issue
+                  example: 'Issue title'
+                body:
+                  type: string
+                  description: The body of the GitHub issue
+                  example: 'Description of the issue'
+                labels:
+                  type: array
+                  items:
+                    type: string
+                    enum:
+                      - bug
+                      - enhancement
+                  description: A list of labels to assign to the issue
+                  example: ['bug', 'enhancement']
+              required:
+                - title
+                - body
+                - labels
+              additionalProperties: false
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    description: HTTP status code indicating success.
+                    default: 201
+                  message:
+                    type: string
+                    description: Descriptive message of the success.
+                    default: OK
+                required:
+                  - statusCode
+                  - message
+                additionalProperties: false
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        409:
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conflict'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+
+components:
+  schemas:
+    BadRequest:
+      type: object
+      properties:
+        statusCode:
+          type: integer
+          format: int64
+          description: HTTP status code indicating a bad request error.
+          default: 400
+        message:
+          type: string
+          description: Descriptive message of the error.
+          default: Bad Request
+        errorCode:
+          type: string
+          enum:
+            - BAD_REQUEST
+          description: >
+            Possible error codes:
+              
+            - `BAD_REQUEST`: Indicates a bad request error.'
+      required:
+        - statusCode
+        - message
+        - errorCode
+      additionalProperties: false
+    Unauthorized:
+      type: object
+      properties:
+        statusCode:
+          type: integer
+          format: int64
+          description: HTTP status code indicating an unauthorized error.
+          default: 401
+        message:
+          type: string
+          description: Descriptive message of the error.
+          default: Unauthorized
+        errorCode:
+          type: string
+          enum:
+            - UNAUTHORIZED
+          description: >
+            Possible error codes:
+              
+            - `UNAUTHORIZED`: Indicates an unauthorized error.'
+      required:
+        - statusCode
+        - message
+        - errorCode
+      additionalProperties: false
+    Forbidden:
+      type: object
+      properties:
+        statusCode:
+          type: integer
+          format: int64
+          description: HTTP status code indicating a forbidden error.
+          default: 403
+        message:
+          type: string
+          description: Descriptive message of the error.
+          default: Forbidden
+        errorCode:
+          type: string
+          enum:
+            - FORBIDDEN
+          description: >
+            Possible error codes:
+              
+            - `FORBIDDEN`: Indicates a forbidden error.'
+      required:
+        - statusCode
+        - message
+        - errorCode
+      additionalProperties: false
+    NotFound:
+      type: object
+      properties:
+        statusCode:
+          type: integer
+          format: int64
+          description: HTTP status code indicating a not found error.
+          default: 404
+        message:
+          type: string
+          description: Descriptive message of the error.
+          default: Not Found
+        errorCode:
+          type: string
+          enum:
+            - NOT_FOUND
+          description: >
+            Possible error codes:
+              
+            - `NOT_FOUND`: Indicates a not found error.'
+      required:
+        - statusCode
+        - message
+        - errorCode
+      additionalProperties: false
+    Conflict:
+      type: object
+      properties:
+        statusCode:
+          type: integer
+          format: int64
+          description: HTTP status code indicating a conflict error.
+          default: 409
+        message:
+          type: string
+          description: Descriptive message of the error.
+          default: Conflict
+        errorCode:
+          type: string
+          enum:
+            - CONFLICT
+          description: >
+            Possible error codes:
+              
+            - `CONFLICT`: Indicates a conflict error.'
+      required:
+        - statusCode
+        - message
+        - errorCode
+      additionalProperties: false
+    InternalServerError:
+      type: object
+      properties:
+        statusCode:
+          type: integer
+          format: int64
+          description: HTTP status code indicating an error.
+          default: 500
+        message:
+          type: string
+          description: Descriptive message of the error.
+          default: Internal Server Error
+        errorCode:
+          type: string
+          enum:
+            - INTERNAL_SERVER_ERROR
+          description: >
+            Possible error codes:
+              
+            - `INTERNAL_SERVER_ERROR`: Indicates an error.'
+      required:
+        - statusCode
+        - message
+        - errorCode
+      additionalProperties: false
+    AccountCreated:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The unique identifier for the account (UUIDv4).
+          example: '123e4567-e89b-12d3-a456-426614174000'
+        createdAt:
+          type: string
+          format: date-time
+          description: The time when the account was created.
+          example: '2023-05-18T12:34:56Z'
+        updatedAt:
+          type: string
+          format: date-time
+          description: The time when the account was last updated.
+          example: '2023-05-18T12:34:56Z'
+        enabled:
+          type: boolean
+          description: A flag indicating whether the account is enabled.
+          example: true
+        owner:
+          type: object
+          description: The owner of the account.
+          properties:
+            id:
+              type: string
+              description: The unique identifier for the user (UUIDv4).
+              example: '123e4567-e89b-12d3-a456-426614174001'
+            createdAt:
+              type: string
+              format: date-time
+              description: The time when the user was created.
+              example: '2023-05-18T12:34:56Z'
+            updatedAt:
+              type: string
+              format: date-time
+              description: The time when the user was last updated.
+              example: '2023-05-18T12:34:56Z'
+            name:
+              type: string
+              description: The name of the user.
+              example: John Doe
+            email:
+              type: string
+              description: The email address of the user.
+              example: john@example.com
+            type:
+              type: string
+              description: The type of the user, always set to ACCOUNT_OWNER.
+              enum:
+                - ACCOUNT_OWNER
+              example: ACCOUNT_OWNER
+            image:
+              type: string
+              description: The image logo of the user.
+              nullable: true
+            enabled:
+              type: boolean
+              description: A flag indicating whether the user is enabled.
+              example: true
+          required:
+            - id
+            - createdAt
+            - updatedAt
+            - name
+            - email
+            - type
+            - image
+            - enabled
+          additionalProperties: false
+      required:
+        - id
+        - createdAt
+        - updatedAt
+        - enabled
+        - owner
+      additionalProperties: false
+    Account:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The unique identifier for the account (UUIDv4).
+          example: '123e4567-e89b-12d3-a456-426614174000'
+        createdAt:
+          type: string
+          format: date-time
+          description: The time when the account was created.
+          example: '2023-05-18T12:34:56Z'
+        updatedAt:
+          type: string
+          format: date-time
+          description: The time when the account was last updated.
+          example: '2023-05-18T12:34:56Z'
+        enabled:
+          type: boolean
+          description: A flag indicating whether the account is enabled.
+          example: true
+      required:
+        - id
+        - createdAt
+        - updatedAt
+        - enabled
+      additionalProperties: false
+    Staff:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The unique identifier for the account (UUIDv4).
+          example: '123e4567-e89b-12d3-a456-426614174000'
+        createdAt:
+          type: string
+          format: date-time
+          description: The time when the account was created.
+          example: '2023-05-18T12:34:56Z'
+        updatedAt:
+          type: string
+          format: date-time
+          description: The time when the account was last updated.
+          example: '2023-05-18T12:34:56Z'
+        accountId:
+          type: string
+          description: The unique identifier for the account (UUIDv4).
+          example: '123e4567-e89b-12d3-a456-426614174000'
+        name:
+          type: string
+          description: The name of the user.
+          example: John Doe
+        email:
+          type: string
+          description: The email address of the user.
+          example: john@example.com
+        type:
+          type: string
+          description: The type of user
+          example: ACCOUNT_OWNER
+          enum:
+            - ACCOUNT_OWNER
+        image:
+          type: string
+          description: URL or path to an image representing the tournament.
+          nullable: true
+        enabled:
+          type: boolean
+          description: A flag indicating whether the account is enabled.
+          example: true
+      required:
+        - id
+        - createdAt
+        - updatedAt
+        - accountId
+        - name
+        - email
+        - type
+        - image
+        - enabled
+      additionalProperties: false
+    Application:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The unique identifier for the application (UUIDv4).
+          example: '123e4567-e89b-12d3-a456-426614174000'
+        createdAt:
+          type: string
+          format: date-time
+          description: The time when the application was created.
+          example: '2023-05-18T12:34:56Z'
+        updatedAt:
+          type: string
+          format: date-time
+          description: The time when the application was last updated.
+          example: '2023-05-18T12:34:56Z'
+        accountId:
+          type: string
+          description: The unique identifier for the account (UUIDv4).
+          example: '123e4567-e89b-12d3-a456-426614174000'
+        name:
+          type: string
+          description: The name of the application.
+          example: My App
+        description:
+          type: string
+          description: A brief description of the application.
+          example: This is a fantastic application
+          nullable: true
+        image:
+          type: string
+          description: The image logo of the application.
+          nullable: true
+        enabled:
+          type: boolean
+          description: A flag indicating whether the application is enabled.
+          example: true
+      required:
+        - id
+        - createdAt
+        - updatedAt
+        - accountId
+        - name
+        - description
+        - image
+        - enabled
+      additionalProperties: false
+    Court:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The unique identifier for the court (UUIDv4).
+          example: '123e4567-e89b-12d3-a456-426614174000'
+        createdAt:
+          type: string
+          format: date-time
+          description: The time when the court was created.
+          example: '2023-05-18T12:34:56Z'
+        updatedAt:
+          type: string
+          format: date-time
+          description: The time when the court was last updated.
+          example: '2023-05-18T12:34:56Z'
+        applicationId:
+          type: string
+          description: The unique identifier for the application (UUIDv4).
+          example: '123e4567-e89b-12d3-a456-426614174000'
+        name:
+          type: string
+          description: The name of the court.
+          example: 1
+        sport:
+          type: string
+          description: The sport of the court.
+          example: PADEL
+          enum:
+            - PADEL
+            - TENNIS
+        surface:
+          type: string
+          description: The surface of the court.
+          example: SYNTHETIC
+          enum:
+            - NATURAL_GRASS
+            - ARTIFICIAL_GRASS
+            - CLAY
+            - HARD
+            - SYNTHETIC
+        enabled:
+          type: boolean
+          description: A flag indicating whether the application is enabled.
+          example: true
+      required:
+        - id
+        - createdAt
+        - updatedAt
+        - applicationId
+        - name
+        - sport
+        - surface
+        - enabled
+      additionalProperties: false
+    Tournament:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The unique identifier for the tournament (UUIDv4).
+          example: '123e4567-e89b-12d3-a456-426614174000'
+        createdAt:
+          type: string
+          format: date-time
+          description: The time when the tournament was created.
+          example: '2024-05-28T12:34:56Z'
+        updatedAt:
+          type: string
+          format: date-time
+          description: The time when the tournament was last updated.
+          example: '2024-05-28T12:34:56Z'
+        applicationId:
+          type: string
+          description: The unique identifier for the application associated with the tournament (UUIDv4).
+          example: '123e4567-e89b-12d3-a456-426614174001'
+        name:
+          type: string
+          description: The name of the tournament.
+          example: Summer Tennis Open
+        description:
+          type: string
+          description: A description of the tournament.
+          example: Annual tennis tournament held during the summer.
+        registrationDeadline:
+          type: string
+          format: date-time
+          description: The deadline for tournament registration.
+          example: '2024-06-15T00:00:00Z'
+        startDate:
+          type: string
+          format: date-time
+          description: The start date of the tournament.
+          example: '2024-07-01T09:00:00Z'
+        endDate:
+          type: string
+          format: date-time
+          description: The end date of the tournament.
+          example: '2024-07-15T18:00:00Z'
+        location:
+          type: string
+          description: The location where the tournament will be held.
+          example: Central Park Tennis Club
+        maxParticipants:
+          type: integer
+          description: The maximum number of participants allowed in the tournament.
+          example: 64
+        inscriptionFee:
+          type: number
+          description: The fee required for tournament registration.
+          example: 50.00
+        prize:
+          type: string
+          description: The prize offered for the tournament (money or material).
+          example: $1000 cash prize
+        image:
+          type: string
+          description: URL or path to an image representing the tournament.
+          nullable: true
+        enabled:
+          type: boolean
+          description: A flag indicating whether the tournament is enabled.
+          example: true
+      required:
+        - id
+        - createdAt
+        - updatedAt
+        - applicationId
+        - name
+        - description
+        - registrationDeadline
+        - startDate
+        - endDate
+        - location
+        - maxParticipants
+        - inscriptionFee
+        - prize
+        - image
+        - enabled
+      additionalProperties: false
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

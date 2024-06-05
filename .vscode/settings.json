@@ -1,0 +1,10 @@
+{
+  "editor.tabSize": 2,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnPaste": true,
+  "editor.formatOnSave": true,
+  "editor.formatOnType": true,
+  "editor.rulers": [120],
+  "prettier.printWidth": 120,
+  "prettier.trailingComma": "all"
+}
