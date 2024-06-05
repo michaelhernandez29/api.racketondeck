@@ -4,27 +4,14 @@ import staff from '../models/staff.js';
 const staffService = {};
 
 /**
- * Finds a staff by their id.
+ * Creates a new application.
  *
- * @param {string} id - The id of the staff to find.
- * @returns {Promise<object|null>} A Promise resolving to the found staff object, or null if no staff is found.
+ * @param {object} data - The data for the application to be created.
+ * @returns {Promise<object>} A promise that resolves to the plain object representation of the created application.
  */
-const findById = async (id) => {
-  return staff.findOne({
-    where: { id },
-    attributes: { exclude: ['password'] },
-    raw: true,
-  });
-};
-
-/**
- * Finds a staff by their email address.
- *
- * @param {string} email - The email address of the staff to find.
- * @returns {Promise<object|null>} A Promise resolving to the found staff object, or null if no staff is found.
- */
-const findByEmail = async (email) => {
-  return staff.findOne({ where: { email }, raw: true });
+const create = async (data) => {
+  const newStaff = await staff.create(data);
+  return newStaff.get({ plain: true });
 };
 
 /**
@@ -59,6 +46,30 @@ const findAndCountAll = async (filters) => {
 };
 
 /**
+ * Finds a staff by their id.
+ *
+ * @param {string} id - The id of the staff to find.
+ * @returns {Promise<object|null>} A Promise resolving to the found staff object, or null if no staff is found.
+ */
+const findById = async (id) => {
+  return staff.findOne({
+    where: { id },
+    attributes: { exclude: ['password'] },
+    raw: true,
+  });
+};
+
+/**
+ * Finds a staff by their email address.
+ *
+ * @param {string} email - The email address of the staff to find.
+ * @returns {Promise<object|null>} A Promise resolving to the found staff object, or null if no staff is found.
+ */
+const findByEmail = async (email) => {
+  return staff.findOne({ where: { email }, raw: true });
+};
+
+/**
  * Deletes a staff by its ID.
  *
  * @param {string} id - The ID of the staff to delete.
@@ -68,9 +79,10 @@ const deleteById = async (id) => {
   await staff.destroy({ where: { id } });
 };
 
+staffService.create = create;
+staffService.findAndCountAll = findAndCountAll;
 staffService.findById = findById;
 staffService.findByEmail = findByEmail;
-staffService.findAndCountAll = findAndCountAll;
 staffService.deleteById = deleteById;
 
 export default staffService;

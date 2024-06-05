@@ -1,7 +1,61 @@
+import _ from 'lodash-es';
 import errorMessages from '../constants/errorMessages.js';
 import permissionHelper from '../helpers/permissionHelper.js';
 import responseHelper from '../helpers/responseHelper.js';
 import staffService from '../services/staffService.js';
+import validator from 'validator';
+
+/**
+ * Handler for POST /accounts/{accountId}/staff
+ *
+ * @param {object} req - The request object.
+ * @param {object} res - The response object.
+ */
+export const create = async (req, res) => {
+  const { accountId } = req.params;
+  const payload = req.body;
+  const requestUser = req._user;
+
+  if (!permissionHelper.canAdminAccount(requestUser, accountId)) {
+    responseHelper.forbidden(res, errorMessages.AUTHORIZATION_NOT_VALID);
+    return;
+  }
+
+  if (!validator.isEmail(payload.email)) {
+    responseHelper.badRequest(res, errorMessages.EMAIL_FORMAT_NOT_VALID);
+    return;
+  }
+
+  const staff = await staffService.findByEmail(payload.email);
+  if (staff) {
+    responseHelper.conflict(res, errorMessages.EMAIL_ALREADY_EXISTS);
+    return;
+  }
+
+  let response = await staffService.create({ accountId, ...payload });
+  response = _.omit(response, 'password');
+  responseHelper.created(res, response);
+};
+
+/**
+ * Handler for GET /accounts/{accountId}/staff
+ *
+ * @param {object} req - The request object.
+ * @param {object} res - The response object.
+ */
+export const findAndCountAll = async (req, res) => {
+  const { accountId } = req.params;
+  const filters = req.query;
+  const requestUser = req._user;
+
+  if (!permissionHelper.canReadAccount(requestUser, accountId)) {
+    responseHelper.forbidden(res, errorMessages.AUTHORIZATION_NOT_VALID);
+    return;
+  }
+
+  const response = await staffService.findAndCountAll({ accountId, ...filters });
+  responseHelper.ok(res, response.rows, response.count);
+};
 
 /**
  * Handler for GET /accounts/{accountId}/staff/{staffId}
@@ -25,26 +79,6 @@ export const findById = async (req, res) => {
   }
 
   responseHelper.ok(res, staff);
-};
-
-/**
- * Handler for GET /accounts/{accountId}/staff
- *
- * @param {object} req - The request object.
- * @param {object} res - The response object.
- */
-export const findAndCountAll = async (req, res) => {
-  const { accountId } = req.params;
-  const filters = req.query;
-  const requestUser = req._user;
-
-  if (!permissionHelper.canReadAccount(requestUser, accountId)) {
-    responseHelper.forbidden(res, errorMessages.AUTHORIZATION_NOT_VALID);
-    return;
-  }
-
-  const response = await staffService.findAndCountAll({ accountId, ...filters });
-  responseHelper.ok(res, response.rows, response.count);
 };
 
 /**

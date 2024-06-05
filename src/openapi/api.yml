@@ -894,6 +894,120 @@ paths:
               schema:
                 $ref: '#/components/schemas/InternalServerError'
   /accounts/{accountId}/staff:
+    post:
+      tags:
+        - Staff 👨‍🏫
+      security:
+        - bearerAuth: []
+      summary: Create a new staff member for a specified account
+      description: This endpoint allows the creation of a new staff member associated with a given account.
+      x-eov-operation-handler: staffController
+      operationId: create
+      parameters:
+        - in: path
+          name: accountId
+          schema:
+            type: string
+            description: The unique identifier for the account (UUIDv4).
+            example: '123e4567-e89b-12d3-a456-426614174000'
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: The name of the new staff member.
+                  example: John Doe
+                email:
+                  type: string
+                  description: The email address of the new staff member.
+                  example: john@example.com
+                password:
+                  type: string
+                  description: The password for the new staff member
+                  example: mySecurePassword123
+                type:
+                  type: string
+                  description: The type of the new staff member
+                  example: ACCOUNT_ADMIN
+                  enum:
+                    - ACCOUNT_ADMIN
+                    - APPLICATION_USER
+                enabled:
+                  type: boolean
+                  description: A flag indicating whether the application is enabled.
+                  example: true
+                  default: true
+              required:
+                - name
+                - email
+                - password
+                - type
+                - enabled
+              additionalProperties: false
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    description: HTTP status code indicating success.
+                    default: 201
+                  message:
+                    type: string
+                    description: Descriptive message of the success.
+                    default: Created
+                  data:
+                    $ref: '#/components/schemas/Staff'
+                required:
+                  - statusCode
+                  - message
+                  - data
+                additionalProperties: false
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        409:
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conflict'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
     get:
       tags:
         - Staff 👨‍🏫
@@ -2663,6 +2777,8 @@ components:
           example: ACCOUNT_OWNER
           enum:
             - ACCOUNT_OWNER
+            - ACCOUNT_ADMIN
+            - APPLICATION_USER
         image:
           type: string
           description: URL or path to an image representing the tournament.
