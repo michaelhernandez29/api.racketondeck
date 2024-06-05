@@ -5,13 +5,13 @@ import cors from 'cors';
 import esmResolver from './middlewares/esmResolver.js';
 import express from 'express';
 import expressPino from 'pino-http';
+import { fileURLToPath } from 'url';
 import fs from 'fs';
 import helmet from 'helmet';
 import logger from './helpers/logger.js';
 import path from 'path';
 import swaggerUi from 'swagger-ui-express';
 import yaml from 'js-yaml';
-import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

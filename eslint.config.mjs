@@ -5,6 +5,7 @@ import pluginJs from '@eslint/js';
 export default [
   {
     languageOptions: { globals: globals.node },
+    ignores: ['.config/*'],
     plugins: {
       jsdoc: jsdoc,
     },

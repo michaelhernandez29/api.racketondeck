@@ -1,3 +1,4 @@
+import { Op } from 'sequelize';
 import staff from '../models/staff.js';
 
 const staffService = {};

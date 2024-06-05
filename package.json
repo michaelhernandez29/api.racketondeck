@@ -11,6 +11,11 @@
     "lint:fix": "npm run lint -- --fix",
     "start:dev": "cross-env nodemon --env-file=.env --inspect=9242 src/index.js"
   },
+  "husky": {
+    "hooks": {
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+    }
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
