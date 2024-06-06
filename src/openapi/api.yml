@@ -1400,6 +1400,113 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/InternalServerError'
+  /accounts/{accountId}/players:
+    post:
+      tags:
+        - Players 🧑‍🤝‍🧑
+      security:
+        - bearerAuth: []
+      summary: Create a player for a specified account
+      description: This endpoint allows the creation of a new player associated with a given account.
+      x-eov-operation-handler: playerController
+      operationId: create
+      parameters:
+        - in: path
+          name: accountId
+          schema:
+            type: string
+            description: The unique identifier for the account (UUIDv4).
+            example: '123e4567-e89b-12d3-a456-426614174000'
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: The name of the new staff member.
+                  example: John Doe
+                email:
+                  type: string
+                  description: The email address of the new staff member.
+                  example: john@example.com
+                password:
+                  type: string
+                  description: The password for the new staff member
+                  example: mySecurePassword123
+                enabled:
+                  type: boolean
+                  description: A flag indicating whether the application is enabled.
+                  example: true
+                  default: true
+              required:
+                - name
+                - email
+                - password
+                - enabled
+              additionalProperties: false
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    description: HTTP status code indicating success.
+                    default: 201
+                  message:
+                    type: string
+                    description: Descriptive message of the success.
+                    default: Created
+                  data:
+                    $ref: '#/components/schemas/Player'
+                required:
+                  - statusCode
+                  - message
+                  - data
+                additionalProperties: false
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        409:
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conflict'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
   /applications/{applicationId}/courts:
     post:
       tags:
@@ -2895,6 +3002,53 @@ components:
         - name
         - email
         - type
+        - image
+        - enabled
+      additionalProperties: false
+    Player:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The unique identifier for the account (UUIDv4).
+          example: '123e4567-e89b-12d3-a456-426614174000'
+        createdAt:
+          type: string
+          format: date-time
+          description: The time when the account was created.
+          example: '2023-05-18T12:34:56Z'
+        updatedAt:
+          type: string
+          format: date-time
+          description: The time when the account was last updated.
+          example: '2023-05-18T12:34:56Z'
+        accountId:
+          type: string
+          description: The unique identifier for the account (UUIDv4).
+          example: '123e4567-e89b-12d3-a456-426614174000'
+        name:
+          type: string
+          description: The name of the user.
+          example: John Doe
+        email:
+          type: string
+          description: The email address of the user.
+          example: john@example.com
+        image:
+          type: string
+          description: URL or path to an image representing the tournament.
+          nullable: true
+        enabled:
+          type: boolean
+          description: A flag indicating whether the account is enabled.
+          example: true
+      required:
+        - id
+        - createdAt
+        - updatedAt
+        - accountId
+        - name
+        - email
         - image
         - enabled
       additionalProperties: false
