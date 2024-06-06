@@ -1507,6 +1507,130 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/InternalServerError'
+    get:
+      tags:
+        - Players 🧑‍🤝‍🧑
+      security:
+        - bearerAuth: []
+      summary: Retrieve a list of players
+      description: This endpoint allows retrieving a list of players from a specific account.
+      x-eov-operation-handler: playerController
+      operationId: findAndCountAll
+      parameters:
+        - in: path
+          name: accountId
+          schema:
+            type: string
+            description: The unique identifier for the account (UUIDv4).
+            example: '123e4567-e89b-12d3-a456-426614174000'
+          required: true
+        - in: query
+          name: applicationId
+          schema:
+            type: string
+            description: The unique identifier for the application (UUIDv4).
+            example: '123e4567-e89b-12d3-a456-426614174000'
+        - name: page
+          in: query
+          description: The page number for pagination.
+          required: false
+          schema:
+            type: integer
+            format: int64
+            default: 0
+        - name: limit
+          in: query
+          description: The limit of results per page.
+          required: false
+          schema:
+            type: integer
+            format: int64
+            default: 20
+        - name: find
+          in: query
+          description: A search term to filter results.
+          required: false
+          schema:
+            type: string
+        - name: order
+          in: query
+          description: >
+            Order of the results: 
+              
+              - `a-z` - Order by name ascending. From A to Z
+              - `z-a` - Order by name descending. From Z to A
+          required: false
+          schema:
+            type: string
+            enum:
+              - a-z
+              - z-a
+            default: a-z
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    description: HTTP status code indicating success.
+                    default: 200
+                  message:
+                    type: string
+                    description: Descriptive message of the success.
+                    default: OK
+                  count:
+                    type: integer
+                    description: Total count of the results.
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Player'
+                required:
+                  - statusCode
+                  - message
+                  - count
+                  - data
+                additionalProperties: false
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        409:
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conflict'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
   /applications/{applicationId}/courts:
     post:
       tags:

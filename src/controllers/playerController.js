@@ -36,3 +36,23 @@ export const create = async (req, res) => {
   response = _.omit(response, 'password');
   responseHelper.created(res, response);
 };
+
+/**
+ * Handler for GET /accounts/{accountId}/players
+ *
+ * @param {object} req - The request object.
+ * @param {object} res - The response object.
+ */
+export const findAndCountAll = async (req, res) => {
+  const { accountId } = req.params;
+  const filters = req.query;
+  const requestUser = req._user;
+
+  if (!permissionHelper.canReadAccount(requestUser, accountId)) {
+    responseHelper.forbidden(res, errorMessages.AUTHORIZATION_NOT_VALID);
+    return;
+  }
+
+  const response = await playerService.findAndCountAll({ accountId, ...filters });
+  responseHelper.ok(res, response.rows, response.count);
+};
