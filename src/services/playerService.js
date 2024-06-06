@@ -69,9 +69,22 @@ const findById = async (id) => {
   });
 };
 
+/**
+ * Updates a player by its ID and returns the updated data.
+ *
+ * @param {string} id - The ID of the player to update.
+ * @param {object} data - The data to update the player with.
+ * @returns {Promise<object|null>} A promise that resolves to the updated player object or null if not found.
+ */
+const updateById = async (id, data) => {
+  const response = await player.update(data, { where: { id }, returning: true });
+  return response[1][0].get({ plain: true });
+};
+
 playerService.create = create;
 playerService.findByEmail = findByEmail;
 playerService.findAndCountAll = findAndCountAll;
 playerService.findById = findById;
+playerService.updateById = updateById;
 
 export default playerService;

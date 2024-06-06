@@ -80,3 +80,30 @@ export const findById = async (req, res) => {
 
   responseHelper.ok(res, player);
 };
+
+/**
+ * Handler for PUT /accounts/{accountId}/players/{playerId}
+ *
+ * @param {object} req - The request object.
+ * @param {object} res - The response object.
+ */
+export const updateById = async (req, res) => {
+  const { accountId, playerId } = req.params;
+  const payload = req.body;
+  const requestUser = req._user;
+
+  if (!permissionHelper.canReadAccount(requestUser, accountId)) {
+    responseHelper.forbidden(res, errorMessages.AUTHORIZATION_NOT_VALID);
+    return;
+  }
+
+  const player = await playerService.findById(playerId);
+  if (!player) {
+    responseHelper.notFound(res, errorMessages.USER_NOT_FOUND);
+    return;
+  }
+
+  let response = await playerService.updateById(playerId, payload);
+  response = _.omit(response, 'password');
+  responseHelper.ok(res, response);
+};
