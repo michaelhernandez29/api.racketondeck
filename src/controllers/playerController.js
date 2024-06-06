@@ -56,3 +56,27 @@ export const findAndCountAll = async (req, res) => {
   const response = await playerService.findAndCountAll({ accountId, ...filters });
   responseHelper.ok(res, response.rows, response.count);
 };
+
+/**
+ * Handler for GET /accounts/{accountId}/players/{playerId}
+ *
+ * @param {object} req - The request object.
+ * @param {object} res - The response object.
+ */
+export const findById = async (req, res) => {
+  const { accountId, playerId } = req.params;
+  const requestUser = req._user;
+
+  if (!permissionHelper.canReadAccount(requestUser, accountId)) {
+    responseHelper.forbidden(res, errorMessages.AUTHORIZATION_NOT_VALID);
+    return;
+  }
+
+  const player = await playerService.findById(playerId);
+  if (!player) {
+    responseHelper.notFound(res, errorMessages.USER_NOT_FOUND);
+    return;
+  }
+
+  responseHelper.ok(res, player);
+};

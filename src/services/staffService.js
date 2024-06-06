@@ -46,7 +46,7 @@ const findAndCountAll = async (filters) => {
 };
 
 /**
- * Finds a staff by their id.
+ * Finds a staff by its id.
  *
  * @param {string} id - The id of the staff to find.
  * @returns {Promise<object|null>} A Promise resolving to the found staff object, or null if no staff is found.
@@ -60,7 +60,7 @@ const findById = async (id) => {
 };
 
 /**
- * Finds a staff by their email address.
+ * Finds a staff by its email address.
  *
  * @param {string} email - The email address of the staff to find.
  * @returns {Promise<object|null>} A Promise resolving to the found staff object, or null if no staff is found.

@@ -15,7 +15,7 @@ const create = async (data) => {
 };
 
 /**
- * Finds a player by their email address.
+ * Finds a player by its email address.
  *
  * @param {string} email - The email address of the player to find.
  * @returns {Promise<object|null>} A Promise resolving to the found player object, or null if no player is found.
@@ -55,8 +55,23 @@ const findAndCountAll = async (filters) => {
   });
 };
 
+/**
+ * Finds a player by its id.
+ *
+ * @param {string} id - The id of the player to find.
+ * @returns {Promise<object|null>} A Promise resolving to the found player object, or null if no player is found.
+ */
+const findById = async (id) => {
+  return player.findOne({
+    where: { id },
+    attributes: { exclude: ['password'] },
+    raw: true,
+  });
+};
+
 playerService.create = create;
 playerService.findByEmail = findByEmail;
 playerService.findAndCountAll = findAndCountAll;
+playerService.findById = findById;
 
 export default playerService;

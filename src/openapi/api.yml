@@ -1631,6 +1631,92 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/InternalServerError'
+  /accounts/{accountId}/players/{playerId}:
+    get:
+      tags:
+        - Players 🧑‍🤝‍🧑
+      security:
+        - bearerAuth: []
+      summary: Retrieve a specific player by ID
+      description: |
+        Retrieve a specific player by their unique ID.
+        This endpoint allows you to fetch details of a specific player using their unique identifier (UUIDv4).
+      x-eov-operation-handler: playerController
+      operationId: findById
+      parameters:
+        - in: path
+          name: accountId
+          schema:
+            type: string
+            description: The unique identifier for the account (UUIDv4).
+            example: '123e4567-e89b-12d3-a456-426614174000'
+          required: true
+        - in: path
+          name: playerId
+          schema:
+            type: string
+            description: The unique identifier for the playerId (UUIDv4).
+            example: '123e4567-e89b-12d3-a456-426614174000'
+          required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    description: HTTP status code indicating success.
+                    default: 200
+                  message:
+                    type: string
+                    description: Descriptive message of the success.
+                    default: OK
+                  data:
+                    $ref: '#/components/schemas/Player'
+                required:
+                  - statusCode
+                  - message
+                  - data
+                additionalProperties: false
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        409:
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conflict'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
   /applications/{applicationId}/courts:
     post:
       tags:
