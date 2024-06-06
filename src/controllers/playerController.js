@@ -107,3 +107,28 @@ export const updateById = async (req, res) => {
   response = _.omit(response, 'password');
   responseHelper.ok(res, response);
 };
+
+/**
+ * Handler for DELETE /accounts/{accountId}/players/{playerId}
+ *
+ * @param {object} req - The request object.
+ * @param {object} res - The response object.
+ */
+export const deleteById = async (req, res) => {
+  const { accountId, playerId } = req.params;
+  const requestUser = req._user;
+
+  if (!permissionHelper.canAdminAccount(requestUser, accountId)) {
+    responseHelper.forbidden(res, errorMessages.AUTHORIZATION_NOT_VALID);
+    return;
+  }
+
+  const staff = await playerService.findById(playerId);
+  if (!staff) {
+    responseHelper.notFound(res, errorMessages.USER_NOT_FOUND);
+    return;
+  }
+
+  await playerService.deleteById(playerId);
+  responseHelper.ok(res);
+};

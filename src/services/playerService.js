@@ -81,10 +81,21 @@ const updateById = async (id, data) => {
   return response[1][0].get({ plain: true });
 };
 
+/**
+ * Deletes a player by its ID.
+ *
+ * @param {string} id - The ID of the player to delete.
+ * @returns {Promise<void>} A promise that resolves when the player is deleted.
+ */
+const deleteById = async (id) => {
+  await player.destroy({ where: { id } });
+};
+
 playerService.create = create;
 playerService.findByEmail = findByEmail;
 playerService.findAndCountAll = findAndCountAll;
 playerService.findById = findById;
 playerService.updateById = updateById;
+playerService.deleteById = deleteById;
 
 export default playerService;
