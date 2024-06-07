@@ -36,3 +36,28 @@ export const create = async (req, res) => {
   const response = await permissionAccountService.create({ accountId, staffId, permission: payload.permission });
   responseHelper.created(res, response);
 };
+
+/**
+ * Handler for GET  /permissions/accounts/{accountId}/staff/{staffId}
+ *
+ * @param {object} req - The request object.
+ * @param {object} res - The response object.
+ */
+export const findByStaffId = async (req, res) => {
+  const { accountId, staffId } = req.params;
+  const requestUser = req._user;
+
+  if (!permissionHelper.canAdminAccount(requestUser, accountId)) {
+    responseHelper.forbidden(res, errorMessages.AUTHORIZATION_NOT_VALID);
+    return;
+  }
+
+  const staff = await staffService.findById(staffId);
+  if (!staff) {
+    responseHelper.notFound(res, errorMessages.USER_NOT_FOUND);
+    return;
+  }
+
+  const response = await permissionAccountService.findAndCountAll({ accountId, staffId });
+  responseHelper.ok(res, response.rows, response.count);
+};
