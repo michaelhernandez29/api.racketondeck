@@ -35,7 +35,19 @@ const findAndCountAll = async (filters) => {
   });
 };
 
+/**
+ * Deletes an account permission by its ID.
+ *
+ * @param {string} id - The ID of the account permission to delete.
+ * @param {string} staffId - The ID of the staff member.
+ * @returns {Promise<void>} A promise that resolves when the account permission is deleted.
+ */
+const deleteByIdAndStaffId = async (id, staffId) => {
+  await permissionAccount.destroy({ where: { id, staffId } });
+};
+
 permissionAccountService.create = create;
 permissionAccountService.findAndCountAll = findAndCountAll;
+permissionAccountService.deleteByIdAndStaffId = deleteByIdAndStaffId;
 
 export default permissionAccountService;
