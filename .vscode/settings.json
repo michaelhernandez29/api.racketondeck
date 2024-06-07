@@ -8,5 +8,8 @@
   "prettier.printWidth": 120,
   "prettier.trailingComma": "all",
   "files.eol": "\r\n",
-  "cSpell.words": ["camelcase", "commitlint"]
+  "cSpell.words": ["camelcase", "commitlint"],
+  "yaml.disableAdditionalProperties": true,
+  "yaml.format.printWidth": 120,
+  "yaml.format.singleQuote": true
 }

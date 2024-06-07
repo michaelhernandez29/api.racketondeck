@@ -1906,6 +1906,109 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/InternalServerError'
+  /permissions/accounts/{accountId}/staff/{staffId}:
+    post:
+      tags:
+        - User Roles & Permissions 🔑
+      security:
+        - bearerAuth: []
+      summary: Create staff permissions
+      description: |
+        This endpoint allows for the creation of user permissions within a specified account.
+      x-eov-operation-handler: permissionAccountController
+      operationId: create
+      parameters:
+        - in: path
+          name: accountId
+          schema:
+            type: string
+            description: The unique identifier for the account (UUIDv4).
+            example: '123e4567-e89b-12d3-a456-426614174000'
+          required: true
+        - in: path
+          name: staffId
+          schema:
+            type: string
+            description: The unique identifier for the staff member (UUIDv4).
+            example: '123e4567-e89b-12d3-a456-426614174000'
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                permission:
+                  type: string
+                  description: The permission level to be assigned to the user.
+                  enum:
+                    - ADMIN
+                    - WRITE
+                    - READ
+                  example: READ
+              required:
+                - permission
+              additionalProperties: false
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    description: HTTP status code indicating success.
+                    default: 201
+                  message:
+                    type: string
+                    description: Descriptive message of the success.
+                    default: Created
+                  data:
+                    $ref: '#/components/schemas/PermissionAccount'
+                required:
+                  - statusCode
+                  - message
+                  - data
+                additionalProperties: false
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        409:
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conflict'
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
   /applications/{applicationId}/courts:
     post:
       tags:
@@ -3353,7 +3456,7 @@ components:
       properties:
         id:
           type: string
-          description: The unique identifier for the account (UUIDv4).
+          description: The unique identifier for the staff member (UUIDv4).
           example: '123e4567-e89b-12d3-a456-426614174000'
         createdAt:
           type: string
@@ -3451,6 +3554,39 @@ components:
         - image
         - enabled
       additionalProperties: false
+    PermissionAccount:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The unique identifier for the permission (UUIDv4).
+          example: '123e4567-e89b-12d3-a456-426614174000'
+        createdAt:
+          type: string
+          format: date-time
+          description: The time when the permission was created.
+          example: '2023-05-18T12:34:56Z'
+        updatedAt:
+          type: string
+          format: date-time
+          description: The time when the permission was last updated.
+          example: '2023-05-18T12:34:56Z'
+        accountId:
+          type: string
+          description: The unique identifier for the account (UUIDv4).
+          example: '123e4567-e89b-12d3-a456-426614174000'
+        staffId:
+          type: string
+          description: The unique identifier for the staff member (UUIDv4).
+          example: '123e4567-e89b-12d3-a456-426614174000'
+        permission:
+          type: string
+          description: The permission level to be assigned to the user.
+          enum:
+            - ADMIN
+            - WRITE
+            - READ
+          example: READ
     Application:
       type: object
       properties:
