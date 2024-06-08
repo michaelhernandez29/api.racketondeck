@@ -1,4 +1,5 @@
 import _ from 'lodash-es';
+import cryptoHelper from '../helpers/cryptoHelper.js';
 import errorMessages from '../constants/errorMessages.js';
 import permissionHelper from '../helpers/permissionHelper.js';
 import responseHelper from '../helpers/responseHelper.js';
@@ -32,8 +33,8 @@ export const create = async (req, res) => {
     return;
   }
 
-  let response = await staffService.create({ accountId, ...payload });
-  response = _.omit(response, 'password');
+  payload.password = await cryptoHelper.hash(payload.password);
+  const response = await staffService.create({ accountId, ...payload });
   responseHelper.created(res, response);
 };
 

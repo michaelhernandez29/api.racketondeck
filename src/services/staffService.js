@@ -1,4 +1,5 @@
 import { Op } from 'sequelize';
+import _ from 'lodash-es';
 import staff from '../models/staff.js';
 
 const staffService = {};
@@ -11,7 +12,8 @@ const staffService = {};
  */
 const create = async (data) => {
   const newStaff = await staff.create(data);
-  return newStaff.get({ plain: true });
+  const plainStaff = newStaff.get({ plain: true });
+  return _.omit(plainStaff, 'password');
 };
 
 /**
