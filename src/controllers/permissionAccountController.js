@@ -11,7 +11,7 @@ import staffService from '../services/staffService.js';
  * @param {object} req - The request object.
  * @param {object} res - The response object.
  */
-export const create = async (req, res) => {
+export const createAccountPermission = async (req, res) => {
   const { accountId, staffId } = req.params;
   const requestUser = req._user;
   const payload = req.body;
